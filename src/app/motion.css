@@ -1,0 +1,170 @@
+/* Движение SÖRE (перенесено из «Витрины» и адаптировано под кнопки SÖRE).
+   Анимируются только transform и opacity. На телефонах наведения нет — иконка и кнопка отвечают на нажатие.
+   При prefers-reduced-motion всё выключается правилом в конце файла. */
+
+/* ---------- Иконки: у каждой своё движение при наведении на кнопку или ссылку ---------- */
+.icon {
+  flex: none;
+  transform-origin: 50% 50%;
+}
+@media (hover: hover) {
+  :is(.btn-accent, .btn-dark, .btn-outline, .btn-wa, .btn-icon, .icon-host, a, button):hover .icon--nudge { animation: icon-nudge var(--dur-icon) var(--ease-key); }
+  :is(.btn-accent, .btn-dark, .btn-outline, .btn-wa, .btn-icon, .icon-host, a, button):hover .icon--back { animation: icon-back var(--dur-icon) var(--ease-key); }
+  :is(.btn-accent, .btn-dark, .btn-outline, .btn-wa, .btn-icon, .icon-host, a, button):hover .icon--bounce { animation: icon-bounce var(--dur-icon) var(--ease-key); }
+  :is(.btn-accent, .btn-dark, .btn-outline, .btn-wa, .btn-icon, .icon-host, a, button):hover .icon--spin { animation: icon-spin var(--dur-icon) var(--ease-key); }
+  :is(.btn-accent, .btn-dark, .btn-outline, .btn-wa, .btn-icon, .icon-host, a, button):hover .icon--fly { animation: icon-fly var(--dur-icon) var(--ease-key); }
+  :is(.btn-accent, .btn-dark, .btn-outline, .btn-wa, .btn-icon, .icon-host, a, button):hover .icon--pop { animation: icon-pop var(--dur-icon) var(--ease-key); }
+  :is(.btn-accent, .btn-dark, .btn-outline, .btn-wa, .btn-icon, .icon-host, a, button):hover .icon--shake { animation: icon-shake var(--dur-icon) ease-in-out; }
+  :is(.btn-accent, .btn-dark, .btn-outline, .btn-wa, .btn-icon, .icon-host, a, button):hover .icon--swing { animation: icon-swing var(--dur-icon) ease-in-out; }
+}
+:is(.btn-accent, .btn-dark, .btn-outline, .btn-wa, .btn-icon, a, button):active .icon {
+  transform: scale(0.88);
+}
+
+@keyframes icon-nudge {
+  40% { transform: translateX(2px) rotate(-6deg); }
+}
+@keyframes icon-back {
+  40% { transform: translateX(-3px); }
+}
+@keyframes icon-bounce {
+  30% { transform: translateY(-4px); }
+  55% { transform: translateY(0) scale(1.06, 0.94); }
+  75% { transform: translateY(-1.5px); }
+}
+@keyframes icon-spin {
+  to { transform: rotate(90deg); }
+}
+@keyframes icon-fly {
+  45% { transform: translate(6px, -6px); opacity: 0; }
+  46% { transform: translate(-6px, 6px); opacity: 0; }
+  100% { transform: none; opacity: 1; }
+}
+@keyframes icon-pop {
+  40% { transform: scale(1.22); }
+  70% { transform: scale(0.95); }
+}
+@keyframes icon-shake {
+  20%, 60% { transform: rotate(-10deg); }
+  40%, 80% { transform: rotate(10deg); }
+}
+@keyframes icon-swing {
+  30% { transform: rotate(12deg); }
+  60% { transform: rotate(-8deg); }
+  85% { transform: rotate(3deg); }
+}
+
+/* ---------- Кнопки: нажатие и блик на главной ---------- */
+:is(.btn-accent, .btn-dark, .btn-outline, .btn-wa, .btn-icon) {
+  transition-property: opacity, transform;
+  transition-duration: 150ms;
+}
+:is(.btn-accent, .btn-dark, .btn-outline, .btn-wa, .btn-icon):active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn-accent,
+.btn-wa {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-accent::after,
+.btn-wa::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 35%, var(--shine) 50%, transparent 65%);
+  transform: translateX(-110%);
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .btn-accent:hover:not(:disabled)::after,
+  .btn-wa:hover:not(:disabled)::after {
+    transform: translateX(110%);
+    transition: transform 420ms var(--ease-key);
+  }
+}
+
+/* ---------- Переключатель темы: видна иконка той темы, на которую переключит кнопка ---------- */
+.theme-toggle .theme-toggle-sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .theme-toggle-sun { display: block; }
+:root[data-theme="dark"] .theme-toggle .theme-toggle-moon { display: none; }
+.theme-toggle .icon {
+  animation: theme-icon-in var(--dur-long) var(--ease-key);
+}
+@keyframes theme-icon-in {
+  from { transform: rotate(-90deg) scale(0.6); opacity: 0; }
+}
+
+/* ---------- Появление карточек: снизу вверх, по очереди (--rise-index задаёт порядок) ---------- */
+.rise-in {
+  animation: rise-in var(--dur-long) var(--ease-key) both;
+  animation-delay: calc(var(--rise-index, 0) * 70ms);
+}
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+}
+
+/* ---------- Иконка в кружке (шаги на лендинге): медленно «дышит» ---------- */
+.icon-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.icon-badge .icon {
+  animation: icon-float 420ms ease-out;
+  animation-delay: 0ms;
+}
+@media (hover: hover) {
+  .icon-host:hover .icon-badge .icon { animation-iteration-count: 1; }
+}
+@keyframes icon-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* ---------- Плавная смена темы (только когда пользователь сам нажал переключатель) ---------- */
+/* ---------- Счётчик корзины: один раз подпрыгивает при изменении ---------- */
+.bump { display: inline-block; animation: bump 300ms var(--ease-key); }
+@keyframes bump { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+
+/* ---------- Галочка «Заказ принят» ---------- */
+.pop-in { animation: pop-in var(--dur-long) var(--ease-key) both; }
+@keyframes pop-in { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .bump,
+  .pop-in,
+  .icon,
+  .rise-in,
+  .btn-accent::after,
+  .btn-wa::after,
+  :root.theme-fade,
+  :root.theme-fade * {
+    animation: none !important;
+    transition: none !important;
+  }
+  :is(.btn-accent, .btn-dark, .btn-outline, .btn-wa, .btn-icon):active:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* Фото проявляется после загрузки, без изменения геометрии. Приоритетное фото без задержки. */
+@media (prefers-reduced-motion: no-preference) {
+  .photo-reveal[data-loaded="true"] { animation: photo-reveal 220ms ease-out; }
+}
+@keyframes photo-reveal { from { opacity: .4; } to { opacity: 1; } }
+
+/* ---------- View Transitions: фото витрины плавно становится фото карточки ---------- */
+::view-transition-group(*) { animation-duration: 300ms; animation-timing-function: var(--ease-key); }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}

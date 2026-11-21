@@ -1,0 +1,14 @@
+title = "Sөre"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Заглушки в примере окружения, ключи отозваны в указанных коммитах"
+paths = ['''(^|/)\.env\.example$''']
+commits = [
+  "dbe170a65c8a0759e6263dd679a67c7c701592a6",
+  "79b80c20bde7e7a5608eb57975576921fdefc547",
+  "73ed13331641307a4f2500ec4e50973537a1c6aa",
+  "2dfa933fa60a627959f0b98588864a73a31171e2",
+]

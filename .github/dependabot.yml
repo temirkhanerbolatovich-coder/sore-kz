@@ -1,0 +1,36 @@
+version: 2
+# Обновления идут в develop (как и вся разработка), в main попадают релизом.
+updates:
+  - package-ecosystem: npm
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "chore(deps)"
+    labels: [dependencies]
+    groups:
+      minor-and-patch:
+        patterns: ['*']
+        update-types: [minor, patch]
+    ignore:
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
+      - dependency-name: eslint
+        update-types: [version-update:semver-major]
+      - dependency-name: vitest
+        update-types: [version-update:semver-major]
+      - dependency-name: '@types/node'
+        update-types: [version-update:semver-major]
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "chore(ci)"
+    labels: [github_actions]
+    groups:
+      minor-and-patch:
+        patterns: ['*']
+        update-types: [minor, patch]

@@ -1,0 +1,194 @@
+@import "tailwindcss";
+
+/* Токены SÖRE. Основа — тёплая палитра (кремовый, терракота).
+   Тёмная тема переопределяет те же переменные в :root[data-theme="dark"]:
+   атрибут ставит скрипт в layout.tsx до первой отрисовки (без вспышки), выбор хранится в localStorage,
+   без выбора тема следует за системой. Цвета в компонентах — только через токены, без hex. */
+:root {
+  --radius-control: .75rem;
+  --radius-card: 1rem;
+  --space-control: 1rem;
+  --space-panel: 1.5rem;
+  --shadow-card: 0 1px 2px rgb(43 33 24 / .06);
+  --shadow-panel: 0 4px 16px rgb(43 33 24 / .10);
+  --shadow-toast: 0 8px 24px rgb(43 33 24 / .16);
+  --shadow-modal: 0 16px 48px rgb(43 33 24 / .24);
+  --cream: #fff8f0; /* фон страницы */
+  --surface: #ffffff; /* карточки, поля, панели */
+  --ink: #2b2118;
+  --muted: #6b5b4d;
+  --line: #eadfd2;
+  --field: #cdbba8;
+  --accent: #c73e1d;
+  --accent-dark: #8f2a12;
+  --accent-soft: #fce8e1;
+  --wa: #0e7c3f;
+  --on-accent: #ffffff; /* текст на accent и wa */
+  --ok-bg: #e6f3ea;
+  --ok-line: #b7dcc3;
+  --ok-ink: #1d4d31;
+  --thumb: #f3d9c4; /* заглушка вместо фото */
+  --thumb-2: #e8d5e6;
+  --thumb-3: #d9e6d0;
+  --thumb-4: #f6e3a8;
+  --thumb-5: #d6e4f0;
+  --thumb-6: #f0d2c0;
+  --switch-off: #8a7b6e;
+  --shine: rgb(255 255 255 / 0.38);
+  --focus: var(--ink);
+
+  /* Движение (используется в motion.css) */
+  --ease-key: cubic-bezier(0.22, 0.8, 0.28, 1);
+  --dur-icon: 420ms;
+  --dur-long: 500ms;
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --shadow-card: 0 1px 2px rgb(0 0 0 / .18);
+  --shadow-panel: 0 4px 16px rgb(0 0 0 / .24);
+  --shadow-toast: 0 8px 24px rgb(0 0 0 / .32);
+  --shadow-modal: 0 16px 48px rgb(0 0 0 / .4);
+  --cream: #17110c;
+  --surface: #221a13;
+  --ink: #f6ece1;
+  --muted: #b8a695;
+  --line: #3a2f26;
+  --field: #66554a;
+  --accent: #ea6542; /* светлее: читается и как текст на тёмном фоне */
+  --accent-dark: #f5a58c;
+  --accent-soft: #3b1e14;
+  --wa: #2fae66;
+  --on-accent: #1a0f0a; /* на светлом акценте текст тёмный */
+  --ok-bg: #14281c;
+  --ok-line: #2b5a3d;
+  --ok-ink: #9ad9b0;
+  --thumb: #3b2e23;
+  --thumb-2: #3b293a;
+  --thumb-3: #2d3a29;
+  --thumb-4: #3c3520;
+  --thumb-5: #293744;
+  --thumb-6: #3e2c24;
+  --switch-off: #6d5f53;
+  --shine: rgb(255 255 255 / 0.22);
+  --focus: var(--ink);
+
+  color-scheme: dark;
+}
+
+/* Печать (плакат с QR): всегда светлая палитра, даже если на экране включена тёмная тема. */
+@media print {
+  :root,
+  :root[data-theme="dark"] {
+    --cream: #ffffff;
+    --surface: #ffffff;
+    --ink: #2b2118;
+    --muted: #6b5b4d;
+    --line: #eadfd2;
+    --field: #cdbba8;
+    --accent: #c73e1d;
+    --accent-dark: #8f2a12;
+    --accent-soft: #fce8e1;
+    --on-accent: #ffffff;
+    color-scheme: light;
+  }
+}
+
+@theme inline {
+  --color-cream: var(--cream);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-field: var(--field);
+  --color-accent: var(--accent);
+  --color-accent-dark: var(--accent-dark);
+  --color-accent-soft: var(--accent-soft);
+  --color-wa: var(--wa);
+  --color-on-accent: var(--on-accent);
+  --color-ok-bg: var(--ok-bg);
+  --color-ok-line: var(--ok-line);
+  --color-ok-ink: var(--ok-ink);
+  --color-thumb: var(--thumb);
+  --color-switch-off: var(--switch-off);
+  --text-caption: 0.875rem;
+  --text-body: 0.9375rem;
+  --text-lead: 1.0625rem;
+  --text-stat: 1.75rem;
+  --font-sans: "Onest", system-ui, sans-serif;
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+@layer components {
+  .btn-accent {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 text-base font-bold transition-colors bg-accent text-on-accent hover:bg-accent-dark;
+  }
+  .btn-dark {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 text-base font-bold transition-colors bg-ink text-cream hover:opacity-90;
+  }
+  .btn-outline {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 text-base font-bold transition-colors border-2 border-ink text-ink hover:bg-ink hover:text-cream;
+  }
+  .btn-wa {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 text-base font-bold transition-colors bg-wa text-on-accent hover:opacity-90;
+  }
+  .btn-icon {
+    @apply inline-flex size-12 items-center justify-center rounded-xl border-[1.5px] border-line bg-surface text-ink transition-colors hover:border-ink;
+  }
+  .input {
+    @apply h-12 w-full rounded-xl border-[1.5px] border-field bg-surface px-4 text-base text-ink focus:border-ink;
+  }
+  .card {
+    @apply border border-line bg-surface;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+}
+
+/* Единственный видимый индикатор клавиатурного фокуса для всех элементов управления. */
+:is(a, button, [role="button"], summary, input, select, textarea):focus-visible,
+input[type="date"]:focus-within,
+input[type="time"]:focus-within,
+label:has(input.sr-only:focus-visible),
+input.sr-only:focus-visible + label,
+input.sr-only:focus-visible + span {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* Ссылки внутри карточек с обрезанными краями получают кольцо внутри карточки. */
+.card.overflow-hidden :is(a, button):focus-visible { outline-offset: -4px; }
+
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: var(--surface);
+  color: var(--ink);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible { transform: translateY(0); }
+.skip-link [lang="kk"] { display: none; }
+:lang(kk) .skip-link [lang="ru"] { display: none; }
+:lang(kk) .skip-link [lang="kk"] { display: inline; }
+
+button, a, input, select { touch-action: manipulation; }
+button { cursor: pointer; }
+button:disabled { cursor: wait; opacity: .6; }
+
+.input { border-radius: var(--radius-control); padding-inline: var(--space-control); }
+.input::placeholder { color: var(--muted); opacity: 1; }
+/* iOS Safari рисует поле даты системным элементом со своей минимальной шириной: оно вылезало из контейнера. */
+.input[type="date"] { -webkit-appearance: none; appearance: none; display: block; min-width: 0; max-width: 100%; line-height: 3rem; }
+.input[type="date"]::-webkit-date-and-time-value { text-align: left; }
+button:disabled { opacity: 1; color: var(--muted); background: var(--surface); }

@@ -1,0 +1,18 @@
+# Netlify: основной хостинг SÖRE (на Vercel Hobby коммерческое использование запрещено условиями).
+# Netlify сам определяет Next.js и подключает свой адаптер; здесь версия Node, команда сборки и расписание.
+[build]
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+# Ежедневная уборка фото: netlify/functions/storage-cleanup.mts (расписание задано в самом файле).
+
+# Превью PR и ветвей не собираем: бесплатный план блокирует сборки от неподтверждённых авторов коммитов
+# («Unrecognized Git contributor»), и на каждом PR появлялись красные проверки. Боевой деплой (main) не затронут.
+# Код выхода 0 у команды ignore означает «пропустить сборку».
+[context.deploy-preview]
+  ignore = "exit 0"
+
+[context.branch-deploy]
+  ignore = "exit 0"

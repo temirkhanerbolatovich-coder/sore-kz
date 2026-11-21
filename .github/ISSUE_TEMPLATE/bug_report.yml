@@ -1,0 +1,43 @@
+name: Ошибка
+description: Что-то работает не так, как задумано
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Что случилось
+      description: Что вы ожидали и что произошло на самом деле.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Как воспроизвести
+      placeholder: |
+        1. Открыть …
+        2. Нажать …
+        3. Увидеть …
+    validations:
+      required: true
+  - type: dropdown
+    id: env
+    attributes:
+      label: Где воспроизводится
+      options: [Боевой сайт, Локально, CI]
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Устройство и браузер
+      placeholder: iPhone 14, Safari / Windows, Chrome 130
+  - type: dropdown
+    id: area
+    attributes:
+      label: Область
+      options: [Витрина и заказ, Кабинет, Фото полки, Импорт прайса, ИИ, Telegram, Вход и письма, Другое]
+  - type: textarea
+    id: extra
+    attributes:
+      label: Скриншоты и логи
+      description: Секреты, ключи и персональные данные из скриншотов и логов уберите.

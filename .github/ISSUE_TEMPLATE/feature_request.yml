@@ -1,0 +1,33 @@
+name: Задача или идея
+description: Новая возможность, улучшение или рабочая задача
+labels: [enhancement]
+body:
+  - type: textarea
+    id: why
+    attributes:
+      label: Зачем
+      description: Какую проблему продавца или покупателя решаем.
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: Что нужно сделать
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Критерии готовности
+      placeholder: |
+        - [ ] …
+        - [ ] проверено на 360 и 390 px, в обеих темах
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Приоритет
+      options: ["p0: блокирует запуск", "p1: важно", "p2: потом"]
+    validations:
+      required: true

@@ -1,0 +1,62 @@
+name: CI
+
+# push запускает проверки только на постоянных ветках, остальное идёт через pull request:
+# иначе у каждого PR были бы две одинаковые проверки (push и pull_request).
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+  workflow_dispatch:
+
+# Новый коммит в ту же ветку отменяет устаревший прогон.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Права токена минимальные. pull-requests: read нужен gitleaks-action: на pull_request он запрашивает
+# список коммитов PR, без этого API отвечает 403 «Resource not accessible by integration».
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  secrets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: 'false'
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: 'false'
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx supabase start -x studio,edge-runtime,logflare,vector,realtime,imgproxy,supavisor
+      - name: Configure local environment
+        shell: bash
+        run: |
+          npx supabase status -o env > /tmp/supabase-env
+          source /tmp/supabase-env
+          printf 'NEXT_PUBLIC_SUPABASE_URL=%s\nNEXT_PUBLIC_SUPABASE_ANON_KEY=%s\nSUPABASE_SERVICE_ROLE_KEY=%s\nNEXT_PUBLIC_SITE_URL=http://localhost:3000\nNEXT_PUBLIC_EMAIL_CODE=1\n' "$API_URL" "$ANON_KEY" "$SERVICE_ROLE_KEY" > .env.local
+      - run: npm run lint
+      - run: npx next typegen && npm run typecheck
+      - run: npm test
+      - run: npm run test:rls
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: test-results
+          path: test-results/
